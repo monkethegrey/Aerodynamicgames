@@ -206,4 +206,70 @@
 			<script src="assets/js/main.js"></script>
 
 	</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Unblocked Games</title>
+<style>
+  * { box-sizing: border-box; margin:0; padding:0; }
+  body { font-family: Arial, sans-serif; background:#f4f4f4; color:#333; }
+  header { background:#222; color:#fff; padding:1rem; text-align:center; }
+  #game-list { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:1rem; padding:1rem; }
+  .game-card { background:#fff; border-radius:8px; overflow:hidden; cursor:pointer;
+    box-shadow:0 2px 5px rgba(0,0,0,0.1); transition: transform .2s;}
+  .game-card:hover { transform: scale(1.03); }
+  .game-card img { width:100%; display:block; }
+  .game-card .name { padding:.5rem; text-align:center; font-size:1rem; }
+  #game-view { display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+    background:rgba(0,0,0,0.8); justify-content:center; align-items:center; padding:2rem; }
+  #game-view iframe { width:80vw; height:80vh; border:0; background:#000; }
+  #close-btn { position:absolute; top:2rem; right:2rem;
+    background:#fff; border:none; padding:.5rem 1rem; font-size:1rem; cursor:pointer;
+    border-radius:4px; }
+</style>
+</head>
+<body>
+<header><h1>Unblocked Games</h1></header>
+<div id="game-list"></div>
+<div id="game-view">
+  <button id="close-btn">Close</button>
+  <div id="iframe-container"></div>
+</div>
+<script>
+  const jsonUrl = 'https://raw.githubusercontent.com/swarmintelli/Unblocked-Games-CDN/main/games.json';
+  fetch(jsonUrl)
+    .then(r=>r.json())
+    .then(list=>{
+      const container = document.getElementById('game-list');
+      list.forEach(game=>{
+        const card = document.createElement('div');
+        card.className = 'game-card';
+        card.innerHTML = `
+          <img src="${game.game_image_icon}" alt="${game.name}">
+          <div class="name">${game.name}</div>`;
+        card.addEventListener('click',()=>{
+          openGame(game);
+        });
+        container.appendChild(card);
+      });
+    })
+    .catch(err=> {
+      document.getElementById('game-list').textContent = 'Failed to load games.';
+      console.error(err);
+    });
+
+  function openGame(game) {
+    const view = document.getElementById('game-view');
+    const cont = document.getElementById('iframe-container');
+    cont.innerHTML = game.iframe || (`<iframe src="${game.game_url}" allowfullscreen></iframe>`);
+    view.style.display = 'flex';
+    document.getElementById('close-btn').focus();
+  }
+  document.getElementById('close-btn').addEventListener('click',()=>{
+    document.getElementById('game-view').style.display = 'none';
+    document.getElementById('iframe-container').innerHTML = '';
+  });
+</script>
+</body>
 </html>
